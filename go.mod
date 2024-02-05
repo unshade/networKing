@@ -1,4 +1,4 @@
-module UPnPFlow
+module networKing
 
 go 1.21
 
