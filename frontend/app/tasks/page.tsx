@@ -8,6 +8,7 @@ import { columns } from "./components/columns"
 import { DataTable } from "./components/data-table"
 import { UserNav } from "./components/user-nav"
 import { taskSchema } from "./data/schema"
+import axios from "axios";
 
 export const metadata: Metadata = {
   title: "Tasks",
@@ -16,13 +17,10 @@ export const metadata: Metadata = {
 
 // Simulate a database read for tasks.
 async function getTasks() {
-  const data = await fs.readFile(
-    path.join(process.cwd(), "app/tasks/data/tasks.json")
-  )
 
-  const tasks = JSON.parse(data.toString())
-
-  return z.array(taskSchema).parse(tasks)
+  let response = await axios.get("http://localhost:8080/forwarded-ports")
+  console.log(response.data)
+  return response.data.data
 }
 
 export default async function TaskPage() {
@@ -49,9 +47,9 @@ export default async function TaskPage() {
       <div className="hidden h-full flex-1 flex-col space-y-8 p-8 md:flex">
         <div className="flex items-center justify-between space-y-2">
           <div>
-            <h2 className="text-2xl font-bold tracking-tight">Welcome back!</h2>
+            <h2 className="text-2xl font-bold tracking-tight">UPnP forwarded ports</h2>
             <p className="text-muted-foreground">
-              Here&apos;s a list of your tasks for this month!
+              Please know what you are doing before changing anything here.
             </p>
           </div>
           <div className="flex items-center space-x-2">

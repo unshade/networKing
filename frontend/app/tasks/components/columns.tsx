@@ -36,40 +36,31 @@ export const columns: ColumnDef<Task>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "id",
+    accessorKey: "portMappingDescription",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Task" />
+      <DataTableColumnHeader column={column} title="Service" />
     ),
-    cell: ({ row }) => <div className="w-[80px]">{row.getValue("id")}</div>,
+    cell: ({ row }) => <div className="w-[100px]">{row.getValue("portMappingDescription")}</div>,
     enableSorting: false,
     enableHiding: false,
   },
   {
-    accessorKey: "title",
+    accessorKey: "internalClient",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Title" />
+        <DataTableColumnHeader column={column} title="Service IPV4" />
     ),
-    cell: ({ row }) => {
-      const label = labels.find((label) => label.value === row.original.label)
-
-      return (
-        <div className="flex space-x-2">
-          {label && <Badge variant="outline">{label.label}</Badge>}
-          <span className="max-w-[500px] truncate font-medium">
-            {row.getValue("title")}
-          </span>
-        </div>
-      )
-    },
+    cell: ({ row }) => <div className="w-[80px]">{row.getValue("internalClient")}</div>,
+    enableSorting: false,
+    enableHiding: false,
   },
   {
-    accessorKey: "status",
+    accessorKey: "enabled",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Status" />
+      <DataTableColumnHeader column={column} title="Enabled" />
     ),
     cell: ({ row }) => {
       const status = statuses.find(
-        (status) => status.value === row.getValue("status")
+        (status) => status.value === row.getValue("enabled")
       )
 
       if (!status) {
@@ -90,31 +81,31 @@ export const columns: ColumnDef<Task>[] = [
     },
   },
   {
-    accessorKey: "priority",
+    accessorKey: "protocol",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Priority" />
+        <DataTableColumnHeader column={column} title="Protocol" />
     ),
-    cell: ({ row }) => {
-      const priority = priorities.find(
-        (priority) => priority.value === row.getValue("priority")
-      )
-
-      if (!priority) {
-        return null
-      }
-
-      return (
-        <div className="flex items-center">
-          {priority.icon && (
-            <priority.icon className="mr-2 h-4 w-4 text-muted-foreground" />
-          )}
-          <span>{priority.label}</span>
-        </div>
-      )
-    },
+    cell: ({ row }) => <div className="w-[80px]">{row.getValue("protocol")}</div>,
+    enableHiding: true,
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id))
     },
+  },
+  {
+    accessorKey: "externalPort",
+    header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="External port" />
+    ),
+    cell: ({ row }) => <div className="w-[80px]">{row.getValue("externalPort")}</div>,
+    enableHiding: true,
+  },
+  {
+    accessorKey: "internalPort",
+    header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Internal port" />
+    ),
+    cell: ({ row }) => <div className="w-[80px]">{row.getValue("internalPort")}</div>,
+    enableHiding: true,
   },
   {
     id: "actions",
