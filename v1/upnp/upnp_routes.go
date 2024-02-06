@@ -3,24 +3,26 @@ package upnp
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/huin/goupnp/dcps/internetgateway2"
+	"golang.org/x/net/context"
+	"networKing/utils"
 )
 
 func Register(engine *gin.RouterGroup) {
 	router := engine.Group("/upnp")
 	{
-		router.GET("/gateway-ip", getGatewayIP)
+		router.GET("/idg", getGatewayIP)
 		router.GET("/forwarded-ports", getForwardedPorts)
-		router.POST("/:routerPort/:forwardedPort", forwardPort)
+		router.POST("/forward", forwardPort)
 	}
 
 }
 
 func getGatewayIP(c *gin.Context) {
-	clients, _, _ := internetgateway2.NewWANIPConnection1Clients()
-	ipv4, _ := clients[0].GetExternalIPAddress()
+	res := *utils.GetGateway()
+	ip, _ := res.GetExternalIPv4Address(context.Background())
 	c.JSON(200, gin.H{
 		"message": "Ok",
-		"data":    ipv4,
+		"data":    ip.String(),
 	})
 }
 
@@ -50,9 +52,49 @@ func getForwardedPorts(c *gin.Context) {
 }
 
 func forwardPort(c *gin.Context) {
-	routerPort := c.Param("routerPort")
-	forwardedPort := c.Param("forwardedPort")
+	/*type PortMapping struct {
+		ExternalPort   uint16 `json:"externalPort"`
+		InternalPort   uint16 `json:"internalPort"`
+		InternalClient string `json:"internalClient"`
+	}
+	var mapping PortMapping
+	err := c.BindJSON(&mapping)
+	println(mapping.InternalClient, mapping.InternalPort, mapping.ExternalPort)
+
+	if err != nil {
+		c.JSON(400, gin.H{
+			"message": "Bad Request",
+		})
+		return
+	}
+
+	clients, _, _ := internetgateway2.NewWANIPConnection2Clients()
+	println(clients[0].GetExternalIPAddress())
+	err = clients[0].AddPortMapping("", uint16(8086), "udp", uint16(8086), "", true, "Networking", uint32(3600))
+	if err != nil {
+		c.JSON(500, gin.H{
+			"error":   err,
+			"message": err.Error(),
+		})
+		return
+	}
+
 	c.JSON(200, gin.H{
-		"message": "Port " + routerPort + " forwarded to " + forwardedPort + " successfully!",
+		"message": "Ok",
+	})*/
+
+	dev := *utils.GetGateway()
+	mapping, err := dev.AddPortMapping(context.Background(), "UDP", 8086, 8086, "ok", 3600)
+	if err != nil {
+		c.JSON(500, gin.H{
+			"error":   err,
+			"message": err.Error(),
+		})
+		return
+	}
+	c.JSON(200, gin.H{
+		"message": "Ok",
+		"data":    mapping,
 	})
+
 }
